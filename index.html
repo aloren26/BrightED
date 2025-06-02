@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ca">
 <head>
@@ -82,21 +81,34 @@
     p {
       font-size: 1.2rem;
     }
-    .interest-section, .ads-section {
+    .categories-section {
       margin-top: 2rem;
-      background: white;
       padding: 1rem;
+      background: white;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
-    .ads-placeholder {
-      height: 100px;
-      background-color: #e0e0e0;
+    .category-grid {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
       justify-content: center;
-      color: #888;
       margin-top: 1rem;
+    }
+    .category-card {
+      background-color: #e6f2f1;
+      border-radius: 10px;
+      padding: 1rem;
+      width: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      text-align: center;
+      text-decoration: none;
+      color: #023047;
+    }
+    .category-card:hover {
+      transform: scale(1.03);
+      background-color: #d1ebe1;
     }
   </style>
 </head>
@@ -152,6 +164,33 @@
   <main>
     <h1>BrightED – Recursos Educatius d'un mestre per a mestres</h1>
     <p>Soc l'Alfonso, mestre d'Anglès i Educació Primària. Actualment, treballo a l'Escola Mossèn Cinto Verdaguer (Rubí). Soc un apassionat de tot allò que ens ofereixen les xarxes i ara també de la Intel·ligència Artificial. Aquesta plataforma té com a objectiu oferir recursos educatius per a Primària, organitzats per cicle i matèria i creats íntegrament amb la IA. Es troba constantment en construcció.</p>
+
+    <section class="categories-section">
+      <h2>📚 Explora per categories</h2>
+      <div class="category-grid">
+        <a class="category-card" href="categoria_ia.html">
+          <h3>Intel·ligència Artificial</h3>
+        </a>
+        <a class="category-card" href="categoria_musica.html">
+          <h3>Música</h3>
+        </a>
+        <a class="category-card" href="categoria_geografia.html">
+          <h3>Geografia</h3>
+        </a>
+        <a class="category-card" href="categoria_castella.html">
+          <h3>Castellà</h3>
+        </a>
+        <a class="category-card" href="categoria_english.html">
+          <h3>English</h3>
+        </a>
+        <a class="category-card" href="categoria_medi.html">
+          <h3>Medi</h3>
+        </a>
+        <a class="category-card" href="categoria_mates.html">
+          <h3>Matemàtiques</h3>
+        </a>
+      </div>
+    </section>
 
   </main>
 </body>
