@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Compara quantitats</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f0f8ff;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #023047;
+    }
+    .comparison {
+      font-size: 3.5rem;
+      margin: 2rem 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    button {
+      font-size: 2rem;
+      padding: 0.8rem 2.2rem;
+      border-radius: 12px;
+      border: 2px solid #b5d6b2;
+      background-color: white;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    button:hover {
+      background-color: #e1f5e1;
+      transform: scale(1.05);
+    }
+    .result {
+      font-size: 1.6rem;
+      margin-top: 1.5rem;
+      min-height: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Compara quantitats</h1>
+  <div class="comparison" id="comparison">🍎🍎 vs 🍎🍎🍎</div>
+  <div class="buttons">
+    <button onclick="checkAnswer('esquerra')">⬅️ Més a l'esquerra</button>
+    <button onclick="checkAnswer('igual')">= Igual</button>
+    <button onclick="checkAnswer('dreta')">➡️ Més a la dreta</button>
+  </div>
+  <div class="result" id="resultat"></div>
+
+  <script>
+    const preguntes = [
+      { esquerra: "🍎🍎", dreta: "🍎🍎🍎", resposta: "dreta" },
+      { esquerra: "🐻🐻🐻", dreta: "🐻", resposta: "esquerra" },
+      { esquerra: "🌼🌼", dreta: "🌼🌼", resposta: "igual" },
+      { esquerra: "🧸🧸🧸🧸", dreta: "🧸🧸", resposta: "esquerra" },
+      { esquerra: "🚗🚗🚗", dreta: "🚗🚗🚗🚗", resposta: "dreta" },
+      { esquerra: "🦋🦋🦋", dreta: "🦋", resposta: "esquerra" },
+      { esquerra: "🍓🍓🍓", dreta: "🍓🍓🍓", resposta: "igual" },
+      { esquerra: "🐠🐠", dreta: "🐠🐠🐠", resposta: "dreta" },
+      { esquerra: "🧁🧁", dreta: "🧁", resposta: "esquerra" },
+      { esquerra: "🎈🎈🎈", dreta: "🎈🎈", resposta: "esquerra" },
+      { esquerra: "🐸", dreta: "🐸🐸", resposta: "dreta" },
+      { esquerra: "🚀🚀🚀🚀", dreta: "🚀🚀", resposta: "esquerra" },
+      { esquerra: "🦕🦕🦕", dreta: "🦕🦕🦕🦕", resposta: "dreta" },
+      { esquerra: "🌟🌟🌟", dreta: "🌟🌟", resposta: "esquerra" },
+      { esquerra: "🍍🍍", dreta: "🍍🍍", resposta: "igual" },
+      { esquerra: "🐶🐶🐶", dreta: "🐶", resposta: "esquerra" },
+      { esquerra: "🍩🍩", dreta: "🍩", resposta: "esquerra" },
+      { esquerra: "🦁", dreta: "🦁🦁", resposta: "dreta" },
+      { esquerra: "🐷🐷", dreta: "🐷🐷", resposta: "igual" },
+      { esquerra: "🍕🍕🍕🍕", dreta: "🍕🍕", resposta: "esquerra" }
+    ];
+
+    let actual = 0;
+
+    function shuffle(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    preguntesShuffled = shuffle([...preguntes]);
+
+    function mostrar() {
+      const p = preguntesShuffled[actual];
+      document.getElementById("comparison").textContent = p.esquerra + " vs " + p.dreta;
+      document.getElementById("resultat").textContent = "";
+    }
+
+    function checkAnswer(respostaUsuari) {
+      const correcta = preguntesShuffled[actual].resposta;
+      const resultat = document.getElementById("resultat");
+
+      if (respostaUsuari === correcta) {
+        resultat.textContent = "✅ Molt bé!";
+        actual = (actual + 1) % preguntesShuffled.length;
+        setTimeout(mostrar, 1500);
+      } else {
+        resultat.textContent = "❌ Torna-ho a provar!";
+      }
+    }
+
+    mostrar();
+  </script>
+</body>
+</html>
