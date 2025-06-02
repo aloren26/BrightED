@@ -1,15 +1,17 @@
+
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BrightED – Recursos Educatius</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Quicksand', sans-serif;
-      background-color: #f0f8ff;
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(to bottom right, #b5d6b2, #ffffff);
+      color: #023047;
     }
     nav {
       background-color: #B5D6B2;
@@ -22,6 +24,7 @@
     }
     .menu-left, .menu-right {
       display: flex;
+      flex-wrap: wrap;
       gap: 1rem;
     }
     .dropdown {
@@ -56,11 +59,25 @@
     .dropdown:hover .dropdown-content {
       display: block;
     }
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .logo img {
+      width: 180px;
+      height: auto;
+    }
     main {
       padding: 2rem;
+      text-align: center;
     }
     h1 {
-      color: #006d77;
+      font-size: 2.5rem;
+      margin-top: 1rem;
+    }
+    p {
+      font-size: 1.2rem;
     }
     .interest-section, .ads-section {
       margin-top: 2rem;
@@ -125,9 +142,13 @@
     </div>
   </nav>
 
+  <div class="logo">
+    <img src="ED (1).svg" alt="Logo BrightED">
+  </div>
+
   <main>
     <h1>BrightED – Recursos Educatius</h1>
-    <p>Soc l'Alfonso Lorenzo Martínez, mestre d'Anglès i Educació Primària. Soc un apassionat de l'educació però també de tot allò que ens ofereixen les xarxes i, actualment, la Intel·ligència Artificial. Aquesta plataforma té com a objectiu oferir recursos educatius per a Primària, organitzats per cicles i matèries.</p>
+    <p>Aquesta plataforma té com a objectiu oferir recursos educatius per a Primària, organitzats per cicle i matèria.</p>
 
     <section class="interest-section">
       <h2>🌐 Webs d'interès</h2>
