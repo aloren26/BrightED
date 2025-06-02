@@ -1,54 +1,66 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BrightED – Recursos Educatius</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       font-family: 'Quicksand', sans-serif;
-      display: flex;
       background-color: #f0f8ff;
     }
-    aside {
-      width: 250px;
+    nav {
       background-color: #B5D6B2;
       padding: 1rem;
-      height: 100vh;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      position: fixed;
-      overflow-y: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .menu-left, .menu-right {
+      display: flex;
+      gap: 1rem;
+    }
+    .dropdown {
+      position: relative;
+    }
+    .dropbtn {
+      background-color: transparent;
+      border: none;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #023047;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 4px;
+    }
+    .dropdown-content a {
+      color: #023047;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {
+      background-color: #e6f2f1;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
     }
     main {
-      margin-left: 250px;
       padding: 2rem;
-      flex: 1;
     }
     h1 {
       color: #006d77;
-    }
-    .menu-group {
-      margin-bottom: 1.5rem;
-    }
-    .menu-group h3 {
-      margin-bottom: 0.5rem;
-      color: #264653;
-    }
-    .menu-group ul {
-      list-style: none;
-      padding-left: 1rem;
-    }
-    .menu-group ul li {
-      margin-bottom: 0.25rem;
-    }
-    .menu-group ul li a {
-      text-decoration: none;
-      color: #023047;
-    }
-    .menu-group ul li a:hover {
-      text-decoration: underline;
     }
     .interest-section, .ads-section {
       margin-top: 2rem;
@@ -69,42 +81,53 @@
   </style>
 </head>
 <body>
-  <aside>
-    <div class="menu-group">
-      <h3>Cicle Inicial</h3>
-      <ul>
-        <li><a href="inicial_english.html">ENGLISH</a></li>
-        <li><a href="inicial_catala.html">CATALÀ</a></li>
-        <li><a href="inicial_castella.html">CASTELLÀ</a></li>
-        <li><a href="inicial_mates.html">MATES</a></li>
-        <li><a href="inicial_medi.html">MEDI</a></li>
-      </ul>
+  <nav>
+    <div class="menu-left">
+      <div class="dropdown">
+        <button class="dropbtn">Cicle Inicial</button>
+        <div class="dropdown-content">
+          <a href="inicial_english.html">ENGLISH</a>
+          <a href="inicial_catala.html">CATALÀ</a>
+          <a href="inicial_castella.html">CASTELLÀ</a>
+          <a href="inicial_mates.html">MATES</a>
+          <a href="inicial_medi.html">MEDI</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropbtn">Cicle Mitjà</button>
+        <div class="dropdown-content">
+          <a href="mitja_english.html">ENGLISH</a>
+          <a href="mitja_catala.html">CATALÀ</a>
+          <a href="mitja_castella.html">CASTELLÀ</a>
+          <a href="mitja_mates.html">MATES</a>
+          <a href="mitja_medi.html">MEDI</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropbtn">Cicle Superior</button>
+        <div class="dropdown-content">
+          <a href="superior_english.html">ENGLISH</a>
+          <a href="superior_catala.html">CATALÀ</a>
+          <a href="superior_castella.html">CASTELLÀ</a>
+          <a href="superior_mates.html">MATES</a>
+          <a href="superior_medi.html">MEDI</a>
+        </div>
+      </div>
     </div>
-    <div class="menu-group">
-      <h3>Cicle Mitjà</h3>
-      <ul>
-        <li><a href="mitja_english.html">ENGLISH</a></li>
-        <li><a href="mitja_catala.html">CATALÀ</a></li>
-        <li><a href="mitja_castella.html">CASTELLÀ</a></li>
-        <li><a href="mitja_mates.html">MATES</a></li>
-        <li><a href="mitja_medi.html">MEDI</a></li>
-      </ul>
+    <div class="menu-right">
+      <div class="dropdown">
+        <button class="dropbtn">RECURSOS</button>
+        <div class="dropdown-content">
+          <a href="#">Enllaç 1</a>
+          <a href="#">Enllaç 2</a>
+        </div>
+      </div>
     </div>
-    <div class="menu-group">
-      <h3>Cicle Superior</h3>
-      <ul>
-        <li><a href="superior_english.html">ENGLISH</a></li>
-        <li><a href="superior_catala.html">CATALÀ</a></li>
-        <li><a href="superior_castella.html">CASTELLÀ</a></li>
-        <li><a href="superior_mates.html">MATES</a></li>
-        <li><a href="superior_medi.html">MEDI</a></li>
-      </ul>
-    </div>
-  </aside>
+  </nav>
 
   <main>
     <h1>BrightED – Recursos Educatius</h1>
-    <p>Aquesta plataforma té com a objectiu oferir recursos educatius per a Primària, organitzats per cicle i matèria.</p>
+    <p>Aquesta plataforma té com a objectiu oferir recursos educatius per a Primària, organitzats per cicles i matèries.</p>
 
     <section class="interest-section">
       <h2>🌐 Webs d'interès</h2>
