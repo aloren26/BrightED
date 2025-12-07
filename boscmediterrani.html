@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Amants del Bosc Mediterrani</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #5D9B59;
+            --light-green: #A8D08D;
+            --dark-green: #2E5A27;
+            --earth: #8D6E63;
+            --sun: #FFCA28;
+            --danger: #e53935;
+            --text-color: #2c3e50;
+            --white: #ffffff;
+            --shadow-soft: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #b3e5fc 0%, #e8f5e9 100%);
+            height: 100vh;
+            /* Suport per a alçada dinàmica en mòbils moderns */
+            height: 100dvh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #app-container {
+            width: 100%;
+            height: 100%;
+            background-color: var(--white);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            /* En mòbil ocupa tot, sense ombres ni vores rodones per aprofitar espai */
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        /* Estil per a Tauletes i Escriptori */
+        @media (min-width: 600px) {
+            #app-container {
+                width: 100%;
+                max-width: 450px;
+                height: 90vh; /* Fallback */
+                height: 90dvh;
+                max-height: 850px;
+                border-radius: 30px;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                border: 8px solid #455A64;
+            }
+        }
+
+        /* Fons de Bosc */
+        .forest-bg {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%235D9B59" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-repeat: no-repeat;
+            background-size: cover;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        /* Header */
+        .header {
+            padding: 15px 20px;
+            background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+            color: white;
+            z-index: 10;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 60px;
+            flex-shrink: 0; /* Evita que s'encongeixi */
+        }
+
+        /* Vides flotants */
+        .floating-lives {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 300;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 5px 12px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            border: 2px solid var(--primary-green);
+        }
+
+        .points-badge {
+            background: var(--sun);
+            color: var(--dark-green);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 900;
+        }
+
+        /* SCREENS */
+        .screen {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 60px);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.4s ease-in-out;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 5;
+            -webkit-overflow-scrolling: touch; /* Suavitat a iOS */
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            display: none; /* Millora rendiment */
+        }
+
+        /* Mission Grid */
+        .mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            margin-top: 20px;
+            padding-bottom: 40px; /* Espai extra per fer scroll */
+        }
+
+        .mission-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #cfd8dc, 0 10px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            border: 2px solid #eceff1;
+            position: relative;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mission-card:active { transform: translateY(5px); box-shadow: 0 0 0 #cfd8dc; }
+
+        .mission-card.locked {
+            background-color: #f5f5f5;
+            opacity: 0.8;
+            pointer-events: none;
+            filter: grayscale(0.8);
+        }
+        
+        .mission-card.locked h3 { color: #999; }
+        .lock-icon {
+            position: absolute; top: 10px; right: 10px; font-size: 1.2rem; opacity: 0.6;
+        }
+        .check-icon {
+            position: absolute; top: 10px; right: 10px; font-size: 1.5rem; color: var(--primary-green); display: none;
+        }
+
+        .mission-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
+        .mission-card h3 { font-size: 1.1rem; margin: 5px 0 0 0; }
+
+        /* Modals */
+        .modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            width: 100%; max-width: 380px;
+            max-height: 90vh; 
+            overflow-y: auto;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 4px solid var(--primary-green);
+            animation: popIn 0.3s;
+            position: relative;
+        }
+
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(180deg, #ffca28, #ffb300);
+            border: none; padding: 15px 20px; border-radius: 50px;
+            font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.1rem;
+            color: #5d4037; cursor: pointer;
+            box-shadow: 0 5px 0 #ff8f00, 0 10px 10px rgba(0,0,0,0.1);
+            margin-top: 20px; width: 100%;
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: 0 0 0 #ff8f00; }
+
+        .btn-option {
+            background: white; border: 2px solid var(--primary-green);
+            color: var(--text-color); margin-bottom: 10px; font-size: 1rem;
+            box-shadow: 0 4px 0 #cfd8dc; text-align: left; padding: 12px 15px;
+            width: 100%; border-radius: 15px; transition: all 0.2s;
+            line-height: 1.3;
+        }
+        .btn-option:active { background: #e8f5e9; transform: translateY(4px); box-shadow: none; }
+
+        /* Progress & Timer */
+        .quiz-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+        }
+        .quiz-progress {
+            display: flex; gap: 8px;
+        }
+        .dot {
+            width: 12px; height: 12px; background: #ddd; border-radius: 50%;
+        }
+        .dot.active { background: var(--primary-green); transform: scale(1.3); }
+        .dot.completed { background: var(--primary-green); }
+
+        .timer-container {
+            width: 100%;
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #81c784, #4caf50);
+            transition: width 1s linear;
+        }
+        .timer-bar.danger {
+            background: #e53935;
+        }
+
+        /* Credits */
+        .credits {
+            position: absolute; bottom: 10px; right: 15px; font-size: 0.75rem;
+            color: #546e7a; font-weight: bold; opacity: 0.7;
+        }
+
+        /* Game Over */
+        #screen-gameover {
+            background: rgba(40,40,40,0.98); color: white; z-index: 400;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div class="floating-lives" id="lives-display">❤️❤️❤️</div>
+
+    <div class="header">
+        <div class="points-badge">PV: <span id="score">0</span></div>
+    </div>
+
+    <div class="forest-bg"></div>
+
+    <!-- SCREEN 1: HOME -->
+    <div id="screen-home" class="screen">
+        <h1 style="text-align: center; font-size: 2.2rem; margin-top:20px;">Bosc Mediterrani</h1>
+        <div style="font-size:5rem; margin: 10px 0;">🌳</div>
+        <div style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <p style="text-align: center; margin: 10px 0; line-height: 1.5;">
+                Benvingut/da explorador/a!<br><br>
+                Tens <strong>3 vides</strong> i <strong>20 segons</strong> per pregunta.<br>
+                <strong>Atenció:</strong> Si falles, hauràs de repetir la pregunta fins que l'encertis!
+            </p>
+        </div>
+        <button class="btn" onclick="goToScreen('screen-map')">Jugar</button>
+        <div class="credits">Joc creat per Alfonso LM</div>
+    </div>
+
+    <!-- SCREEN 2: MAP -->
+    <div id="screen-map" class="screen hidden">
+        <h2>Mapa de Missions</h2>
+        <div class="mission-grid">
+            <div class="mission-card" id="btn-m0" onclick="startMission(0)">
+                <div class="check-icon">✅</div>
+                <span class="mission-icon">🐗</span>
+                <h3>Fauna</h3>
+            </div>
+            <div class="mission-card locked" id="btn-m1" onclick="startMission(1)">
+                <div class="lock-icon">🔒</div>
+                <div class="check-icon">✅</div>
+                <span class="mission-icon">🌿</span>
+                <h3>Flora</h3>
+            </div>
+            <div class="mission-card locked" id="btn-m2" onclick="startMission(2)">
+                <div class="lock-icon">🔒</div>
+                <div class="check-icon">✅</div>
+                <span class="mission-icon">🌲</span>
+                <h3>Arbres</h3>
+            </div>
+            <div class="mission-card locked" id="btn-m3" onclick="startMission(3)">
+                <div class="lock-icon">🔒</div>
+                <div class="check-icon">✅</div>
+                <span class="mission-icon">☀️</span>
+                <h3>Clima</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MISSION -->
+    <div id="modal-mission" class="modal hidden">
+        <div class="modal-content">
+            <div style="text-align: right;"><span onclick="closeModal()" style="font-size: 1.5rem; cursor: pointer; color: #aaa;">&times;</span></div>
+            
+            <!-- VIEW 1: INTRO -->
+            <div id="view-intro">
+                <h2 id="m-title">Títol</h2>
+                <div style="font-size: 3rem;" id="m-icon"></div>
+                <div class="instruction-box" id="m-desc" style="background: #f1f8e9; padding: 15px; border-radius: 15px; margin: 10px 0; font-size: 1rem; text-align: left;"></div>
+                <button class="btn" onclick="startQuizSequence()">Comença (20s)</button>
+            </div>
+
+            <!-- VIEW 2: QUIZ -->
+            <div id="view-quiz" class="hidden">
+                <div class="timer-container">
+                    <div class="timer-bar" id="timer-bar"></div>
+                </div>
+                
+                <div class="quiz-header">
+                    <h3 style="margin:0; color: #555;">Pregunta <span id="q-num">1</span>/3</h3>
+                    <div class="quiz-progress">
+                        <div class="dot" id="dot-0"></div>
+                        <div class="dot" id="dot-1"></div>
+                        <div class="dot" id="dot-2"></div>
+                    </div>
+                </div>
+
+                <p id="q-text" style="font-weight: bold; font-size: 1.1rem; min-height: 60px;">Pregunta...</p>
+                <div id="q-options"></div>
+            </div>
+
+            <!-- VIEW 3: FEEDBACK -->
+            <div id="view-feedback" class="hidden">
+                <div id="fb-icon" style="font-size: 4rem; margin: 10px 0;"></div>
+                <h2 id="fb-title">Resultat</h2>
+                <p id="fb-msg">Missatge</p>
+                <button class="btn" id="fb-btn" onclick="nextStep()">Següent</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="screen-gameover" class="modal hidden">
+        <div class="modal-content" style="border-color: #e53935;">
+            <div style="font-size: 5rem;">💔</div>
+            <h1 style="color: #e53935;">Has perdut!</h1>
+            <p>T'has quedat sense vides.</p>
+            <button class="btn" style="background: linear-gradient(180deg, #e53935, #c62828); color: white;" onclick="fullReset()">Tornar a Començar</button>
+        </div>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div id="screen-certificate" class="screen hidden">
+        <h1 style="color: var(--primary-green);">Missió Complerta!</h1>
+        <div id="certificate-display">
+            <div style="background-color: #FFF8E1; border: 8px double #8D6E63; padding: 20px; border-radius: 10px; position: relative; margin-top:20px;">
+                <h2 style="text-align: center; border-bottom: 2px solid #8D6E63; padding-bottom: 10px; font-size: 1.2rem;">CERTIFICAT OFICIAL</h2>
+                <p style="text-align: center; font-style: italic; font-size: 0.9rem;">S'atorga el títol de:</p>
+                <h3 style="text-align: center; color: var(--primary-green); font-size: 1.3rem;">GUARDIÀ/GUARDIANA DEL<br>BOSC MEDITERRANI</h3>
+                <div style="text-align: center; font-size: 3rem; margin-top: 10px;">🏅</div>
+                <div style="text-align: center; font-size: 0.8rem; margin-top: 10px; color: #888;">Curs 5è de Primària</div>
+            </div>
+        </div>
+        <button class="btn" onclick="fullReset()">Jugar de nou</button>
+    </div>
+
+</div>
+
+<script>
+    // --- CONFIGURACIÓ ---
+    let lives = 3;
+    let score = 0;
+    let currentMissionIdx = 0;
+    let missionProgress = [false, false, false, false];
+    let currentQuestions = [];
+    let questionIndex = 0;
+    
+    // Timer
+    let timerInterval;
+    let timeLeft = 20;
+
+    // --- BANC DE PREGUNTES (55 preguntes amb dificultats) ---
+    // Les preguntes amb 4 opcions es consideren "Difícils" (Hard)
+    const questionsBank = {
+        fauna: [
+            // Normal (3 opcions)
+            { q: "Quin animal remou la terra buscant menjar de nit?", a: ["El Senglar", "L'Esquirol", "La Guineu"], c: 0 },
+            { q: "Quin ocell rapinyaire està protegit al nostre bosc?", a: ["El Pingüí", "L'Àliga Cuabarrada", "El Colom"], c: 1 },
+            { q: "Per què molts animals són de colors marrons?", a: ["Per moda", "Per tenir calor", "Per camuflar-se"], c: 2 },
+            { q: "Quin rèptil pren el sol a les pedres?", a: ["El Cocodril", "La Sargantana", "La Tortuga"], c: 1 },
+            { q: "Quin insecte fa 'cric-cric' a l'estiu?", a: ["La Cigala", "La Papallona", "La Formiga"], c: 0 },
+            { q: "Què li agrada menjar a l'esquirol?", a: ["Peix", "Pinyes i nous", "Herba"], c: 1 },
+            { q: "El Teixó és un animal...", a: ["Nocturn", "Diürn", "Aquàtic"], c: 0 },
+            { q: "Quin d'aquests és un amfibi?", a: ["El Gripau", "La Cuca de Llum", "El Ratolí"], c: 0 },
+            { q: "On viuen les formigues?", a: ["Al Rusc", "Al Formiguer", "Al Niu"], c: 1 },
+            { q: "La Guineu és...", a: ["Herbívora", "Omnívora/Carnívora", "Insectívora"], c: 1 },
+            { q: "Quin ocell canta 'ut-ut'?", a: ["El Puput", "L'Àguila", "El Corb"], c: 0 },
+            
+            // Hard (4 opcions) - Es posaran al final
+            { q: "Quin d'aquests animals NO és típic del bosc mediterrani?", a: ["El Senglar", "L'Ós Polar", "El Toixó", "La Geneta"], c: 1 },
+            { q: "Quin insecte és perillós per als pins i els gossos?", a: ["L'Eruga Processionària", "La Marieta", "L'Escarabat", "L'Abella"], c: 0 },
+            { q: "Quin animal és el depredador de conills per excel·lència?", a: ["L'Àguila", "El Linx (o gat salvatge)", "El Cérvol", "L'Esquirol"], c: 1 },
+            { q: "Com es diu la cria del porc senglar?", a: ["Garrí", "Porcell", "Raig", "Cadell"], c: 2 }
+        ],
+        flora: [
+            // Normal
+            { q: "Com són les fulles per no perdre aigua?", a: ["Grans i toves", "Petites i dures", "No tenen fulles"], c: 1 },
+            { q: "Quina planta s'usa per cuinar?", a: ["El Romaní", "L'Heura", "La Falguera"], c: 0 },
+            { q: "El Bruc és un...", a: ["Arbre", "Arbust", "Bolet"], c: 1 },
+            { q: "Quina planta fa olor i té flors liles?", a: ["Farigola", "Espígol", "Roure"], c: 1 },
+            { q: "Què vol dir resistent a la sequera?", a: ["Necessita molta aigua", "Viu al mar", "Viu amb poca aigua"], c: 2 },
+            { q: "Per què algunes plantes tenen espines?", a: ["Per fer-se maques", "Per protegir-se", "Per captar llum"], c: 1 },
+            { q: "El Llentiscle és...", a: ["Un bolet", "Un arbust típic", "Una pedra"], c: 1 },
+            { q: "La Ginesta té les flors de color...", a: ["Groc", "Blau", "Vermell"], c: 0 },
+            { q: "L'Heura és una planta...", a: ["Enfiladissa", "Subterrània", "Aquàtica"], c: 0 },
+            { q: "L'Espàrrec de bosc es cull a...", a: ["L'Hivern", "La Primavera", "L'Estiu"], c: 1 },
+
+            // Hard
+            { q: "Quina part de la planta fa la fotosíntesi?", a: ["L'arrel", "La tija", "La fulla", "La flor"], c: 2 },
+            { q: "Quin d'aquests bolets és molt buscat a la tardor?", a: ["El Rovelló", "El Xampinyó", "La Tòfona", "El Florit"], c: 0 },
+            { q: "Què és el sotabosc?", a: ["Els arbres més alts", "Les plantes que creixen sota els arbres", "Les arrels", "El cel"], c: 1 },
+            { q: "El Margalló és l'única palmera autòctona d'Europa. És veritat?", a: ["Sí", "No", "Només a l'Àfrica", "És un pi"], c: 0 }
+        ],
+        arbres: [
+            // Normal
+            { q: "Quin és el fruit de l'Alzina?", a: ["Pinya", "Gla", "Castanya"], c: 1 },
+            { q: "Fulles en forma d'agulla prima:", a: ["Pi Blanc", "Roure", "Cirerer"], c: 0 },
+            { q: "Fulla perenne vol dir...", a: ["Cau a la tardor", "Mai té fulles", "Verda tot l'any"], c: 2 },
+            { q: "D'on s'extreu el suro?", a: ["Alzina Surera", "Pi Pinyer", "Desmai"], c: 0 },
+            { q: "Les arrels dels pins serveixen per...", a: ["Fer ensopegar", "Aguantar la terra", "Res"], c: 1 },
+            { q: "Un bosc d'alzines es diu...", a: ["Pineda", "Alzinhar", "Selva"], c: 1 },
+            { q: "L'Alzina té la fulla...", a: ["Tova i gran", "Dura i petita", "Blava"], c: 1 },
+            { q: "El Pi Pinyer té forma de...", a: ["Paraigua", "Espelma", "Bola"], c: 0 },
+            { q: "La fusta de l'Alzina és...", a: ["Molt tova", "Molt dura", "Líquida"], c: 1 },
+            { q: "Els anells del tronc ens diuen...", a: ["L'edat de l'arbre", "El seu nom", "On és el nord"], c: 0 },
+
+            // Hard
+            { q: "Quin arbre NO és típic del clima mediterrani?", a: ["El Pi Blanc", "L'Alzina", "El Baobab", "El Roure"], c: 2 },
+            { q: "Quina malaltia greu afecta als oms?", a: ["La Grip", "La Grafiosi", "La Varicel·la", "El Tètanus"], c: 1 },
+            { q: "Com s'anomena la resina que treuen els pins?", a: ["Mel", "Resina o Trementina", "Saba", "Petroli"], c: 1 },
+            { q: "El Roure Martinenc perd la fulla a l'hivern, per tant és de fulla...", a: ["Perenne", "Caduca", "Seca", "Morta"], c: 1 }
+        ],
+        clima: [
+            // Normal
+            { q: "Els estius mediterranis són...", a: ["Freds", "Calurosos i secs", "Nevats"], c: 1 },
+            { q: "Risc més gran a l'estiu:", a: ["Inundacions", "Incendis", "Terratrèmols"], c: 1 },
+            { q: "Quan plou més?", a: ["Primavera/Tardor", "Estiu/Hivern", "Mai"], c: 0 },
+            { q: "El vidre al bosc pot provocar...", a: ["Res", "Foc (efecte lupa)", "Jocs"], c: 1 },
+            { q: "Els hiverns són...", a: ["Molt freds", "Suaus", "Polars"], c: 1 },
+            { q: "El vent fort de l'estiu...", a: ["Apaga focs", "Escampa incendis", "Refresca"], c: 1 },
+            { q: "Si veiem fum, truquem al...", a: ["112", "Telepizza", "000"], c: 0 },
+            { q: "La sequera és...", a: ["Molt de temps sense ploure", "Molta pluja", "Neu"], c: 0 },
+            { q: "Els rius mediterranis tenen cabal...", a: ["Irregular", "Sempre igual", "Sec sempre"], c: 0 },
+            { q: "La 'gota freda' porta...", a: ["Calor", "Pluges torrencials", "Sequera"], c: 1 },
+
+            // Hard
+            { q: "Quin aparell mesura la quantitat de pluja?", a: ["El Termòmetre", "El Pluviòmetre", "El Baròmetre", "L'Anemòmetre"], c: 1 },
+            { q: "Què és una riuada?", a: ["Una festa al riu", "Una baixada sobtada d'aigua", "Un peix", "Un tipus de vent"], c: 1 },
+            { q: "El vent del nord, fort i sec, es diu...", a: ["Llevant", "Tramuntana", "Ponent", "Xaloc"], c: 1 },
+            { q: "El canvi climàtic està fent que els estius siguin...", a: ["Més curts", "Més frescos", "Més llargs i calorosos", "Més plujosos"], c: 2 }
+        ]
+    };
+
+    const missionInfos = [
+        { key: 'fauna', title: "Missió 1: Fauna", icon: "🐗", text: "Els animals s'adapten a la calor i la sequera. Supera el repte!" },
+        { key: 'flora', title: "Missió 2: Flora", icon: "🌿", text: "Plantes aromàtiques i arbustos. Demostra que ets un expert botànic." },
+        { key: 'arbres', title: "Missió 3: Arbres", icon: "🌲", text: "Pins, alzines i suros. Coneix els gegants del bosc." },
+        { key: 'clima', title: "Missió 4: Clima", icon: "☀️", text: "Foc, sequera i pluges. Aprèn a protegir l'entorn." }
+    ];
+
+    // --- FUNCIONS UI ---
+    function updateLivesUI() {
+        let hearts = "";
+        for(let i=0; i<lives; i++) hearts += "❤️";
+        for(let i=lives; i<3; i++) hearts += "🖤"; 
+        document.getElementById('lives-display').innerText = hearts;
+        if (lives <= 0) document.getElementById('screen-gameover').classList.remove('hidden');
+    }
+
+    function goToScreen(id) {
+        document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal() {
+        stopTimer();
+        document.getElementById('modal-mission').classList.add('hidden');
+    }
+
+    function fullReset() {
+        lives = 3; score = 0;
+        missionProgress = [false, false, false, false];
+        document.getElementById('score').innerText = "0";
+        updateLivesUI();
+        
+        for(let i=0; i<4; i++) {
+            let card = document.getElementById('btn-m'+i);
+            card.querySelector('.check-icon').style.display = 'none';
+            if (i > 0) {
+                card.classList.add('locked');
+                card.querySelector('.lock-icon').style.display = 'block';
+                card.style.backgroundColor = '';
+                card.querySelector('h3').style.color = '';
+            }
+        }
+        document.getElementById('screen-gameover').classList.add('hidden');
+        document.getElementById('modal-mission').classList.add('hidden');
+        document.getElementById('screen-certificate').classList.add('hidden');
+        goToScreen('screen-home');
+    }
+
+    // --- TIMER LOGIC ---
+    function startTimer() {
+        timeLeft = 20;
+        document.getElementById('timer-bar').style.width = '100%';
+        document.getElementById('timer-bar').classList.remove('danger');
+        
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            let percentage = (timeLeft / 20) * 100;
+            document.getElementById('timer-bar').style.width = percentage + "%";
+            
+            if(timeLeft <= 5) document.getElementById('timer-bar').classList.add('danger');
+            
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleAnswer(-1); // Time out = Wrong answer
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    // --- MISSION LOGIC ---
+    function startMission(idx) {
+        if (idx > 0 && !missionProgress[idx - 1]) return;
+
+        currentMissionIdx = idx;
+        let info = missionInfos[idx];
+        
+        document.getElementById('m-title').innerText = info.title;
+        document.getElementById('m-icon').innerText = info.icon;
+        document.getElementById('m-desc').innerText = info.text;
+
+        // SELECCIÓ DE PREGUNTES (2 Normals + 1 Hard)
+        let allQ = questionsBank[info.key];
+        let easyQ = allQ.filter(q => q.a.length === 3);
+        let hardQ = allQ.filter(q => q.a.length === 4);
+        
+        // Random sort
+        easyQ.sort(() => Math.random() - 0.5);
+        hardQ.sort(() => Math.random() - 0.5);
+        
+        // Agafem 2 fàcils i 1 difícil
+        currentQuestions = [easyQ[0], easyQ[1], hardQ[0]];
+        questionIndex = 0;
+
+        document.getElementById('view-intro').classList.remove('hidden');
+        document.getElementById('view-quiz').classList.add('hidden');
+        document.getElementById('view-feedback').classList.add('hidden');
+        document.getElementById('modal-mission').classList.remove('hidden');
+    }
+
+    function startQuizSequence() {
+        document.getElementById('view-intro').classList.add('hidden');
+        document.getElementById('view-quiz').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        startTimer(); // Start 20s timer
+
+        for(let i=0; i<3; i++) {
+            let d = document.getElementById('dot-'+i);
+            d.className = 'dot';
+            if(i < questionIndex) d.classList.add('completed');
+            if(i === questionIndex) d.classList.add('active');
+        }
+
+        document.getElementById('q-num').innerText = questionIndex + 1;
+        
+        let qData = currentQuestions[questionIndex];
+        document.getElementById('q-text').innerText = qData.q;
+        
+        let container = document.getElementById('q-options');
+        container.innerHTML = '';
+        
+        // Create buttons (handles 3 or 4 options automatically via flex/grid)
+        qData.a.forEach((optText, idx) => {
+            let btn = document.createElement('button');
+            btn.className = 'btn btn-option';
+            btn.innerText = optText;
+            btn.onclick = () => handleAnswer(idx);
+            container.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(selectedIndex) {
+        stopTimer();
+        let qData = currentQuestions[questionIndex];
+        let isCorrect = (selectedIndex === qData.c);
+
+        document.getElementById('view-quiz').classList.add('hidden');
+        document.getElementById('view-feedback').classList.remove('hidden');
+
+        let fbTitle = document.getElementById('fb-title');
+        let fbMsg = document.getElementById('fb-msg');
+        let fbIcon = document.getElementById('fb-icon');
+        let fbBtn = document.getElementById('fb-btn');
+
+        if (isCorrect) {
+            fbIcon.innerText = "🌟";
+            fbTitle.innerText = "Correcte!";
+            fbTitle.style.color = "var(--primary-green)";
+            fbMsg.innerText = "Bona feina!";
+            fbBtn.innerText = "Següent";
+            // LÒGICA NOVA: Passar a la següent pregunta
+            fbBtn.onclick = nextStep;
+        } else {
+            lives--;
+            updateLivesUI();
+            fbIcon.innerText = "💔";
+            fbTitle.innerText = "Oh, no...";
+            fbTitle.style.color = "#e53935";
+            
+            if (lives > 0) {
+                fbMsg.innerText = (selectedIndex === -1) ? "S'ha acabat el temps!" : "Resposta incorrecta.";
+                fbMsg.innerText += "\nEt queden " + lives + " vides.";
+                
+                // LÒGICA NOVA: Repetir la pregunta
+                fbBtn.innerText = "Torna-ho a provar";
+                fbBtn.onclick = retryStep;
+            } else {
+                fbMsg.innerText = "T'has quedat sense vides!";
+                fbBtn.innerText = "Veure resultat";
+                fbBtn.onclick = () => {
+                    document.getElementById('modal-mission').classList.add('hidden');
+                };
+            }
+        }
+    }
+
+    // Funcio nova per repetir la pregunta
+    function retryStep() {
+        if(lives <= 0) return;
+        
+        document.getElementById('view-feedback').classList.add('hidden');
+        document.getElementById('view-quiz').classList.remove('hidden');
+        
+        // Tornem a mostrar la MATEIXA pregunta (reiniciem timer)
+        showQuestion();
+    }
+
+    function nextStep() {
+        if(lives <= 0) {
+            document.getElementById('modal-mission').classList.add('hidden');
+            return; 
+        }
+
+        questionIndex++;
+        if (questionIndex < 3) {
+            document.getElementById('view-feedback').classList.add('hidden');
+            document.getElementById('view-quiz').classList.remove('hidden');
+            showQuestion();
+        } else {
+            missionSuccess();
+        }
+    }
+
+    function missionSuccess() {
+        document.getElementById('modal-mission').classList.add('hidden');
+        
+        if (!missionProgress[currentMissionIdx]) {
+            score += 250;
+            document.getElementById('score').innerText = score;
+            missionProgress[currentMissionIdx] = true;
+            
+            let currentCard = document.getElementById('btn-m' + currentMissionIdx);
+            currentCard.querySelector('.check-icon').style.display = 'block';
+
+            if (currentMissionIdx < 3) {
+                let next = document.getElementById('btn-m' + (currentMissionIdx + 1));
+                next.classList.remove('locked');
+                next.querySelector('.lock-icon').style.display = 'none';
+                next.style.backgroundColor = 'white';
+                next.querySelector('h3').style.color = 'var(--dark-green)';
+                next.style.filter = 'none';
+                next.style.pointerEvents = 'auto';
+            }
+        }
+
+        if (score >= 1000) {
+            setTimeout(() => goToScreen('screen-certificate'), 500);
+        }
+    }
+</script>
+</body>
+</html>
